@@ -9,6 +9,7 @@
 using namespace std;
 
 int len;
+int rebase;
 struct Key_M
 {
  	int seg_length; //the segment length
