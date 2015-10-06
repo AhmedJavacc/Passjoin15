@@ -63,8 +63,11 @@ public:
 	int candidate_tau_plus_two_original_len_tree_ind(char *x, int x_len, int pos_x, char ** words);
 	int candidate_tau_plus_two_hist_len_tree_ind(char *x, int x_len, int pos_x, char ** words);
 	int candidate_tau_plus_two_hist_len_tree_ind_hist_index(int len,int B0,int B1,char**words);
+	int candidate_tau_plus_two_hist_len_tree_ind_len_index(int len,char**words);
 	int self_join(int len,int B0,int B1,char**words);
 	int R_S_join(int l,int b0,int b1,int len,int B0,int B1,char**words);
+	int self_join(int len,char**words);
+	int R_S_join(int l,int len,char**words);
 	bool iterativeVerify(char * r, char * s, int i, int first_seg, int last_seg, int k, int start_r, int start_s, int end_r, int end_s, int pos_s, int pos_r, int tau_dash, iterVerfy_dir f);
 	int * verified;
 	//int * previous;

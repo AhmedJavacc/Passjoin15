@@ -1,0 +1,105 @@
+# depslib dependency file v1.0
+1444073237 source:e:\programs\github\invlist.cc
+	"invList.h"
+	<string.h>
+	<stdio.h>
+	"key.h"
+	<iostream>
+
+1444073237 e:\programs\github\invlist.h
+	<unordered_map>
+	"vector"
+	"key.h"
+
+1444073237 e:\programs\github\key.h
+	<unordered_map>
+	<string>
+	<string.h>
+	<stdio.h>
+
+1444073237 source:e:\programs\github\invlist_seg.cc
+	"invList_Seg.h"
+	<string.h>
+	<stdio.h>
+	<iostream>
+
+1444073237 e:\programs\github\invlist_seg.h
+	<unordered_map>
+	"vector"
+	"key_Mod.h"
+
+1444073237 e:\programs\github\key_mod.h
+	<unordered_map>
+	<string>
+	<string.h>
+	<stdio.h>
+	"perfect_hash.h"
+
+1444073237 e:\programs\github\perfect_hash.h
+
+1444073237 source:e:\programs\github\key.cc
+	"key.h"
+
+1444073237 source:e:\programs\github\key_mod.cc
+	"key_Mod.h"
+	<iostream>
+
+1444073237 source:e:\programs\github\passjoin.cc
+	"passjoin.h"
+	"stdio.h"
+	<iostream>
+	<algorithm>
+	<stdlib.h>
+	<math.h>
+	<xmmintrin.h>
+
+1444073237 e:\programs\github\passjoin.h
+	<chrono>
+	"invList.h"
+	<fstream>
+	<unordered_map>
+	<chrono>
+	<vector>
+	<deque>
+	<unordered_map>
+	"invList_Seg.h"
+	<stack>
+	"utils.h"
+
+1444077752 e:\programs\github\utils.h
+	<string>
+	<iostream>
+	<xmmintrin.h>
+
+1443459630 source:e:\programs\github\read.cc
+	"expr.h"
+	"read.h"
+
+1442665628 e:\programs\github\expr.h
+	<chrono>
+
+1442665628 e:\programs\github\read.h
+	<fstream>
+	<iostream>
+	<cstring>
+	<string>
+	<algorithm>
+	<unordered_set>
+	<chrono>
+	<iostream>
+
+1442665628 source:e:\programs\github\expr.cc
+	"expr.h"
+
+1444077920 source:e:\programs\github\main.cc
+	"read.h"
+	"expr.h"
+	"passjoin.h"
+	<chrono>
+	<sstream>
+	<map>
+	<iostream>
+	"key_Mod.h"
+	"utils.h"
+	<math.h>
+

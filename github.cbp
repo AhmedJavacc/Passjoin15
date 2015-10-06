@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="github" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin\Debug\github" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj\Debug\" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+				</Compiler>
+			</Target>
+			<Target title="Release">
+				<Option output="bin\Release\github" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj\Release\" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+		</Compiler>
+		<Unit filename="expr.cc" />
+		<Unit filename="expr.h" />
+		<Unit filename="invList.cc" />
+		<Unit filename="invList.h" />
+		<Unit filename="invList_Seg.cc" />
+		<Unit filename="invList_Seg.h" />
+		<Unit filename="key.cc" />
+		<Unit filename="key.h" />
+		<Unit filename="key_Mod.cc" />
+		<Unit filename="key_Mod.h" />
+		<Unit filename="main.cc" />
+		<Unit filename="passjoin.cc" />
+		<Unit filename="passjoin.h" />
+		<Unit filename="perfect_hash.h" />
+		<Unit filename="prefect_hash.h" />
+		<Unit filename="read.cc" />
+		<Unit filename="read.h" />
+		<Unit filename="utils.h" />
+		<Extensions>
+			<code_completion />
+			<debugger />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

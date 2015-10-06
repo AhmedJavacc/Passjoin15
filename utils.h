@@ -19,7 +19,7 @@ public :
 		i = (i & 0x33333333) + ((i >> 2) & 0x33333333);
 		return (((i + (i >> 4)) & 0x0F0F0F0F) * 0x01010101) >> 24;
 	}
-	
+
 	int countChar(char*a){
 		//char a = 'a';
 		int res = 0;
@@ -34,7 +34,7 @@ public :
 		return res;
 	}
 
-void combinationUtil(char * arr, char* data, int start, int end, int index, int r, unordered_map<string, int>&a)
+void combinationUtil(char * &arr,int &id, char* &data, int start, int end, int index, int &r, unordered_map<string, vector<int>*>&a)
 	{
 		if (index == r)
 		{
@@ -43,10 +43,12 @@ void combinationUtil(char * arr, char* data, int start, int end, int index, int 
 			//cout << data1 << endl;
 			auto it = a.find(data1);
 			if (it!=a.end()){
-				(*it).second += 1;
+				((*it).second)->push_back(id);
 			}
 			else{
-				a.emplace(string(data), 1);
+			    vector<int>* v=new vector<int>();
+			    v->push_back(id);
+				a.emplace(string(data), v);
 			}
 			return;
 		}
@@ -58,21 +60,21 @@ void combinationUtil(char * arr, char* data, int start, int end, int index, int 
 				data = new char[r + 1];
 			}
 			data[index] = arr[i];
-			combinationUtil(arr, data, i + 1, end, index + 1, r, a);
+			combinationUtil(arr,id, data, i + 1, end, index + 1, r, a);
 		}
 	}
 
-	void printCombination(char * arr, int n, int q, unordered_map<string, int>&a)
+	void printCombination(char * arr,int id, int n, int q, unordered_map<string, vector<int>*>&a)
 	{
 
 		char * data = new char[q + 1];
-		combinationUtil(arr, data, 0, n - 1, 0, q, a);
+		combinationUtil(arr,id, data, 0, n - 1, 0, q, a);
 
 	}
 	bool LCS(char * X, char * Y,int len,int q)
 	{
-	
-		
+
+
 		vector< vector<int> > c(2, vector<int>(len + 1, 0));
 		int i, j;
 		for (i = 1; i <= len; i++)
