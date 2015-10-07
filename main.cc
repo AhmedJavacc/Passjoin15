@@ -9,9 +9,34 @@
     #include "key_Mod.h"
     #include "utils.h"
     #include <math.h>
-
+#include <thread>
     using namespace std;
-    typedef multimap<int, unsigned int> saveMap;
+	passjoin * p;
+	ReadFile * r1;
+	int *numthread;
+	int *numlen;
+	void call_from_thread(pair<int,pair<int, int>>start_end){
+		//cout<<
+		cout << start_end.second.second << endl;
+		for (int i = start_end.second.first; i < start_end.second.second; i++){
+			p->self_join(i + p->start, r1->words,start_end.first);
+		}
+	}
+	void call_from_thread_1(pair<int, int>start_end){
+		//cout<<
+		//cout << "ssssss"<<start_end.first << endl;
+		//cout << *numlen << endl;
+
+		for (int i = start_end.second; i < *numlen; i+=(p->tau)*(*(numthread))){
+			
+			for (int j = (i - p->tau)>0 ? (i - p->tau) : 0; j < i; j++){
+				//cout << j << endl;
+				p->R_S_join(j + p->start, i + p->start, r1->words, start_end.first);
+			
+			}
+			//cout << i << endl;
+		}
+	}
     bool length_sort(pair<int, int> x, pair<int, int> y){
 
         return x.first < y.first || x.first == y.first && x.second <= y.second;
@@ -29,15 +54,9 @@
         p.tau = tau;
         p.verified = new int[r.wcnt];
         p.dist=new int[strlen(r.words[r.wcnt-1])+2];
+		p.candidates_l = 0;
+		
         memset(p.dist, 0, sizeof(p.dist));
-
-
-
-        p.mark_covered = new int[r.wcnt];
-        p.mark_overlapping = new int[r.wcnt];
-        //p.candidates_marking = new passjoin::bounaries*[r.wcnt-first_index-1]();
-        p.first_match = new int[r.wcnt];
-        p.coutChar = new int[r.wcnt];
 
         p.first_match_pair = new pair<int, int>[r.wcnt];
 
@@ -57,9 +76,19 @@
 
         p.filter_operation = 0;
         int array_size = 900;
-        p.v0 = new int[array_size];
-        p.v1 = new int[array_size];
-        p.e = new int[array_size];
+		p.v0 = new int[array_size];
+		p.v1 = new int[array_size];
+		p.e = new int[array_size];
+
+		p.v01 = new int*[8];
+		p.v11 = new int*[8];
+		p.e1 = new int*[8];
+		for (int i = 0; i < 8; i++){
+			p.v01[i] = new int[array_size];
+			p.v11[i] = new int[array_size];
+			p.e1[i] = new int[array_size];
+		}
+
 
         size_t ind_tree_size = strlen(r.words[r.wcnt - 1]) - first_length + 1;
         cout << first_length << endl;
@@ -69,12 +98,13 @@
         p.seg_count = new int[ind_tree_size];
         p.strings_indexed=new vector<int>**[ind_tree_size];
         p.strings_len_indexed=new vector<int>[ind_tree_size];
+		p.results = new pair<long, long>[ind_tree_size];
         p.L2 = new InvList_Seg *[ind_tree_size];
         p.L_B0_B1 = new InvList_Seg ***[ind_tree_size];
         cout << "dddd" << endl;
         for (int i = 0; i < ind_tree_size; i++){
             p.strings_indexed[i]=new vector<int> *[2*p.tau+1];
-
+			p.results[i] = make_pair(0, 0);
             p.L_B0_B1[i] = new InvList_Seg**[2*p.tau+1];
             for(int j=0;j<2*p.tau+1;j++){
                     p.strings_indexed[i][j]=new vector<int>[2*p.tau+1-j];
@@ -86,7 +116,7 @@
             p.L2[i] = new InvList_Seg[p.tau + k];
         }
         cout << "ssss" << endl;
-        memset(p.coutChar, 0, (r.wcnt) * 4);
+       // memset(p.coutChar, 0, (r.wcnt) * 4);
         p.histograms = new int*[r.wcnt];
         p.histograms_SSE = new float*[r.wcnt];
         p.histograms_first= new float*[r.wcnt];
@@ -95,9 +125,9 @@
 
         char a = 'a';
         char z = 'z';
-        for (int i = first_index; i < r.wcnt; i++){
+   /*     for (int i = first_index; i < r.wcnt; i++){
             p.coutChar[i] = utils1.countChar(r.words[i]);
-        }
+        }*/
         cout << "wwww" << endl;
         for (int i = first_index; i < r.wcnt; i++){
 
@@ -163,6 +193,7 @@
                 }
 
             }
+				
                 p.lenc[strlen(r.words[i]) - strlen(r.words[0])]++;
 
                 p.strings_len_indexed[strlen(r.words[i]) - strlen(r.words[0])].push_back(i);
@@ -184,10 +215,10 @@
         //p.matched_groups.reserve(4000000);
         memset(p.verified, -1, (r.wcnt) * 4);
 
-        memset(p.first_match, -1, (r.wcnt) * 4);
-        memset(p.mark_covered, 0, (r.wcnt) * 4);
+       // memset(p.first_match, -1, (r.wcnt) * 4);
+        //memset(p.mark_covered, 0, (r.wcnt) * 4);
 
-        memset(p.mark_overlapping, -1, (r.wcnt) * 4);
+        //memset(p.mark_overlapping, -1, (r.wcnt) * 4);
         memset(p.v0, 0, array_size * 4);
         memset(p.v1, 0, array_size * 4);
         memset(p.e, 0, array_size * 4);
@@ -221,6 +252,8 @@
         first_length = 6;
 
     passjoin  p1;
+	p = &p1;
+	r1 = &r;
         //init(tau_main, r, first_length, first_index, p,1);
         init(tau_main , r, first_length, first_index, p1,2);
         //p1.myfile.open("E:\\programs\\github\\bin\Release\\out.txt");
@@ -228,57 +261,121 @@
         auto start=chrono::high_resolution_clock::now();
 
             int len=strlen(r.words[r.wcnt-1])-strlen(r.words[0])+1;
-    //		for (int i = 0; i<len; i++){
-    //			cout << i << endl;
-    //			if (p1.lenc[i]>0){
-    //				for (int j = 0; j < 2 * p1.tau + 1; j++){
-    //					for (int k = 0; k < 2 * p1.tau + 1 - j; k++){
-    //						//cout << i << "d" << j << "w" << k << endl;
-    //						p1.candidates += p1.candidate_tau_plus_two_hist_len_tree_ind_hist_index(i, j, k, r.words);
-    //					}
-    //				}
-    //			}
-    //		}
-//            for (int i = 0; i<len; i++){
-//                //cout << i << endl;
-//                if (p1.lenc[i]>0){
-//
-//                            //cout << i << "d" << j << "w" << k << endl;
-//                            p1.candidates += p1.candidate_tau_plus_two_hist_len_tree_ind_len_index(i, r.words);
-//                        }
-//
-//
-//            }
-        utils util;
-        unordered_map<string,vector<int>*>*a=new unordered_map<string,vector<int>*>[strlen(r.words[r.wcnt-1])-strlen(r.words[0])+1];
+			int default1 = r.wcnt / 8;
+			int * arr = new int[8];
+			int sum = 0;
+			int i2 = 0;
+			for (int l = 0; l < len; l++){
+				
+				if (abs(sum-default1)<p1.lenc[l]&&i2<7){
+					arr[i2] = l;
+					i2++;
+					sum = p1.lenc[l];
+				}
+				else{
+					sum += p1.lenc[l];
+				}
+			}
+			arr[i2] = len;
+			//for (int i = 0; i < r.wcnt; i++){
+			//	p1.candidates += p1.candidate_tau_plus_two_hist_len_tree_ind(r.words[i], strlen(r.words[i]), i, r.words);
+			//	p1.partion_tau_2_tree_ind(r.words[i], strlen(r.words[i]), i);
+			//}
+			//cout <<" SS "<< p1.candidates_l << endl;
+			//thread t1(call_from_thread, make_pair(0,make_pair(0, len / 8)));
+			//thread t2(call_from_thread, make_pair(1,make_pair(len / 8, len / 4)));
+			//thread t3(call_from_thread, make_pair(2,make_pair(len / 4, 3*len/8)));
+			//thread t4(call_from_thread, make_pair(3,make_pair(3 * len / 8, len/2)));
+			//thread t5(call_from_thread, make_pair(4, make_pair(len/2, 5*len / 8)));
+			//thread t6(call_from_thread, make_pair(5, make_pair(5 * len / 8, 6 * len / 8)));
+			//thread t7(call_from_thread, make_pair(6, make_pair(6 * len / 8, 7 * len / 8)));
+			//thread t8(call_from_thread, make_pair(7, make_pair(7 * len / 8, len)));
+			thread t1(call_from_thread, make_pair(0, make_pair(0, arr[0])));
+			thread t2(call_from_thread, make_pair(1, make_pair(arr[0], arr[1])));
+			thread t3(call_from_thread, make_pair(2, make_pair(arr[1], arr[2])));
+			thread t4(call_from_thread, make_pair(3, make_pair(arr[2], arr[3])));
+			thread t5(call_from_thread, make_pair(4, make_pair(arr[3], arr[4])));
+			thread t6(call_from_thread, make_pair(5, make_pair(arr[4], arr[5])));
+			thread t7(call_from_thread, make_pair(6, make_pair(arr[5], arr[6])));
+			thread t8(call_from_thread, make_pair(7, make_pair(arr[6], arr[7])));
+			t1.join();
+			t2.join();
+			t3.join();
+			t4.join();
+			t5.join();
+			t6.join();
+			t7.join();
+			t8.join();
+    //        for (int i = 0; i<len; i++){
+    //            //cout << i << endl;
+    //            if (p1.lenc[i]>0){
 
-    for(int i=0;i<strlen(r.words[r.wcnt-1])-strlen(r.words[0])+1;i++){
-    cout<<i<<endl;
-    if(p.lenc[i])
-        util.printCombination(r.words[i],i,10,2,a[strlen(r.words[i])-strlen(r.words[0])]);
-    }
+				//	 p1.self_join(i+p1.start,r.words);
+				//}
 
-    //long siz=0;
-    //for(int i=0;i<strlen(r.words[r.wcnt-1])-strlen(r.words[0])+1;i++){
-    //    for(auto it=a[i].begin();it!=a[i].end();it++){
-    //        siz+=((*it).second)->size();
-    //        //cout<<((*it).second)->size()<<endl;
-    //    }
-    //}
 
-    //cout<<siz<<" 55555555"<<endl;
-    //cout<<"ddddd"<<endl;
+    //        }
+			for (int i = 0; i < len; i++){
+				p1.candidates += p1.results[i].second;
+				p1.results[i].second = 0;
+				p1.matched_pair += p1.results[i].first;
+				p1.results[i].first = 0;
+			}
+			cout << " SS " << p1.candidates << endl;
+
+			thread **t=new thread*[p1.tau];
+			int size = 0;
+			if (len > 8){
+				size = 8;
+			}else{
+				size = len;
+	}
+			numlen = &len;
+			numthread = &size;
+			for (int k = 0; k < p1.tau; k++){
+				t[k] = new thread[size];
+
+				for (int i = 0; i < size; i++){
+					t[k][i] = thread(call_from_thread_1, make_pair(i, (p->tau)*i + k));
+					//call_from_thread_1(make_pair(i, (p->tau)*i+k));
+					
+				}
+				for (int i = 0; i < size; i++){
+					t[k][i].join();
+					
+
+				}
+			}
+			//for (int i = 0; i < size; i++){
+			//	t[i].join();
+			//}
+
+			//for (int i = 0; i<len; i++){
+			//	//cout << i << endl;
+			//	if (p1.lenc[i]>0){
+
+			//		//cout << i << "d" << j << "w" << k << endl;
+			//		 p1.candidates += p1.candidate_tau_plus_two_hist_len_tree_ind_len_index(i, r.words);
+			//		//p1.candidates += p1.self_join(i + p1.start, r.words);
+			//	}
+
+
+			//}
+			for (int i = 0; i < len; i++){
+				p1.candidates += p1.results[i].second;
+				p1.matched_pair += p1.results[i].first;
+			}
                  long  cnt=(2*p1.tau+2)*(2*p1.tau+1)/2 *len;
                     cout << cnt;
                     auto end = chrono::high_resolution_clock::now();
                     auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
                     cout << "1 running candidates filter_operation " << ms << "\t" << p1.matched_pair << "\t" << p1.candidates << endl;
 
-                    sort(p1.matched_strings.begin(), p1.matched_strings.begin() + p1.matched_pair, length_sort);
+                    /*sort(p1.matched_strings.begin(), p1.matched_strings.begin() + p1.matched_pair, length_sort);
                     cout << "sss" << endl;
                     for (auto it = p1.matched_strings.begin(); it != p1.matched_strings.end(); ++it){
                         p1.myfile << (*it).first << " , " << (*it).second << endl;
-                    }
+                    }*/
                     p1.myfile.close();
 
     return 0;

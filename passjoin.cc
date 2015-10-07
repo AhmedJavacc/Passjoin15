@@ -65,6 +65,61 @@ int passjoin::LevenshteinDistance_length_aware_modified(char * word1, char * wor
 	return v0[s];
 }
 
+int passjoin::LevenshteinDistance_length_aware_modified(char * word1, char * word2, int word1_len, int word2_len, int tau,int i1)
+{
+
+
+
+	int  j, r, s;
+	char * word_r, *word_s;
+	if (word1_len >= word2_len){
+		s = word1_len;
+		r = word2_len;
+		word_s = word1;
+		word_r = word2;
+	}
+	else{
+		s = word2_len;
+		r = word1_len;
+		word_s = word2;
+		word_r = word1;
+	}
+	int delta = s - r;
+
+
+
+
+
+	for (int i = 0; i < s + 1; i++){
+		v01[i1][i] = i;
+		v11[i1][i] = tau + 1;
+	}
+	for (int i = 1; i <= r; i++)
+	{
+		v11[i1][0] = i;
+
+
+		int st = max(1, (i - (tau - delta) / 2));
+		int en = min(s, (i + (tau + delta) / 2));
+		for (j = st; j <= en; j++)
+		{
+
+			int cost = (word_r[i - 1] == word_s[j - 1]) ? 0 : 1;
+			v11[i1][j] = min(min(v11[i1][j - 1] + 1, v01[i1][j] + 1), v01[i1][j - 1] + cost);
+
+
+			e1[i1][j] = v11[i1][j] + abs((s - j) - (r - i));
+		}
+
+		for (int j = 0; j < s + 1; j++){
+			v01[i1][j] = v11[i1][j];
+			v11[i1][j] = tau + 1;
+			e1[i1][j] = 0;
+		}
+	}
+
+	return v01[i1][s];
+}
 
 int passjoin::LevenshteinDistance_length_aware_modified(char * word1, char * word2, int start_1, int start_2, int end_1, int end_2, int tau)
 {
@@ -1079,6 +1134,9 @@ int passjoin::candidate_tau_plus_two_hist_len_tree_ind(char *x, int x_len, int p
 										if (!newFilter(pos_x, *it, x_len)){
 										continue;
 										}
+										if (x_len == l){
+											candidates_l++;
+										}
 											cand_l++;
 											int d = LevenshteinDistance_length_aware_modified(x, words[*it], x_len, l, tau);
 											if (d <= tau){
@@ -1138,6 +1196,9 @@ int passjoin::candidate_tau_plus_two_hist_len_tree_ind(char *x, int x_len, int p
 										verified[*it] = pos_x;
 										if (!newFilter(pos_x, *it, x_len)){
 											continue;
+										}
+										if (x_len == l){
+											candidates_l++;
 										}
 											cand_l++;
 											int d = LevenshteinDistance_length_aware_modified(x, words[*it], x_len, l, tau);
@@ -1227,7 +1288,7 @@ int passjoin:: candidate_tau_plus_two_hist_len_tree_ind_hist_index(int len,int B
 int passjoin:: candidate_tau_plus_two_hist_len_tree_ind_len_index(int len,char**words){
 
 	int cand_l = 0;
-	cand_l+=self_join(len+start,words);
+	//cand_l+=self_join(len+start,words);
 
 	for (int l = (len - (tau))<0?0:(len - (tau)); l <= len-1; l++){
 		if (lenc[l]>0){
@@ -1239,7 +1300,7 @@ int passjoin:: candidate_tau_plus_two_hist_len_tree_ind_len_index(int len,char**
 	return cand_l;
 
 }
-int passjoin::self_join(int len,char**words){
+int passjoin::self_join(int len,char**words,int i1){
 	InvList_Seg* curr;
 	int cand_l = 0;
 
@@ -1270,11 +1331,11 @@ int passjoin::self_join(int len,char**words){
 															continue;
 															}
 																cand_l++;
-																int d = LevenshteinDistance_length_aware_modified(words[*it1], words[*it], strlen(words[*it1]), len, tau);
+																int d = LevenshteinDistance_length_aware_modified(words[*it1], words[*it], strlen(words[*it1]), len, tau,i1);
 																if (d <= tau){
-
-																	matched_pair++;
-																	matched_strings.push_back(make_pair(*it1, *it));
+																	results[len - start].first++;
+																	//matched_pair++;
+																	//matched_strings.push_back(make_pair(*it1, *it));
 
 															}
 
@@ -1321,11 +1382,11 @@ int passjoin::self_join(int len,char**words){
 															continue;
 														}
 															cand_l++;
-															int d = LevenshteinDistance_length_aware_modified(words[*it1], words[*it], strlen(words[*it1]), len, tau);
+															int d = LevenshteinDistance_length_aware_modified(words[*it1], words[*it], strlen(words[*it1]), len, tau,i1);
 															if (d <= tau){
-
-																matched_pair++;
-																matched_strings.push_back(make_pair(*it1, *it));
+																results[len - start].first++;
+																//matched_pair++;
+																//matched_strings.push_back(make_pair(*it1, *it));
 															}
 													}
 												}
@@ -1347,6 +1408,7 @@ int passjoin::self_join(int len,char**words){
 		}
 		partion_tau_2_tree_ind(words[*it1],  len, *it1);
 	}
+	results[len - start].second = cand_l;
 	return cand_l;
 }
 int passjoin::R_S_join(int l,int len,char**words){
@@ -1384,7 +1446,7 @@ int passjoin::R_S_join(int l,int len,char**words){
 																if (d <= tau){
 
 																	matched_pair++;
-																	matched_strings.push_back(make_pair(*it1, *it));
+																	//matched_strings.push_back(make_pair(*it1, *it));
 
 															}
 
@@ -1435,7 +1497,7 @@ int passjoin::R_S_join(int l,int len,char**words){
 															if (d <= tau){
 
 																matched_pair++;
-																matched_strings.push_back(make_pair(*it1, *it));
+																//matched_strings.push_back(make_pair(*it1, *it));
 															}
 													}
 												}
@@ -1457,6 +1519,119 @@ int passjoin::R_S_join(int l,int len,char**words){
 		}
 	}
 	return cand_l;
+}
+
+int passjoin::R_S_join(int l, int len, char**words,int i1){
+	InvList_Seg* curr;
+	int cand_l = 0;
+
+
+	int first_seg = utils1.floor(l, tau + 2);
+	int k = l - (first_seg)*(tau + 2);
+	int last_seg = utils1.ceiling(l, tau + 2);
+	curr = L2[l - start];
+	int delta = len - (l);
+	//cout << l << " " << len << endl;
+	//cout << l-start << " dd " << len << endl;
+	for (auto it1 = strings_len_indexed[len - start].begin(); it1 != strings_len_indexed[len - start].end(); ++it1){
+		int pi = 0;
+		for (int i = 0; i<tau + 2 - k; i++){
+			int pmin = max(pi - (i), pi + delta - (tau + 1) + i);
+			int pmax = min(pi + (i), pi + delta + (tau + 1) - i);
+			for (int p = pmin; p <= pmax; p++){
+				auto v = curr[i].check(words[*it1] + p, first_seg);
+				if (v){
+
+					if (v->size()>0){
+
+						for (std::vector<int>::iterator it = v->begin(); it != v->end(); ++it){
+							if (verified[*it] != *it1){
+								if (first_match_pair[*it].first == *it1){
+									if (first_match_pair[*it].second != i){
+
+										verified[*it] = *it1;
+										if (!newFilter(*it1, *it, strlen(words[*it1]))){
+											continue;
+										}
+										results[len - start].second++;
+										int d = LevenshteinDistance_length_aware_modified(words[*it1], words[*it], strlen(words[*it1]), l, tau,i1);
+										if (d <= tau){
+
+											results[len - start].first++;
+											//matched_strings.push_back(make_pair(*it1, *it));
+
+										}
+
+									}
+								}
+								else{
+
+									first_match_pair[*it].first = *it1;
+									first_match_pair[*it].second = i;
+
+								}
+							}
+
+
+						}
+
+
+
+
+					}
+
+				}
+
+			}
+			pi += first_seg;
+		}
+		for (int i = tau + 2 - k; i<tau + 2; i++){
+			int pmin = max(pi - (i), pi + delta - (tau + 1) + i);
+			int pmax = min(pi + (i), pi + delta + (tau + 1) - i);
+			for (int p = pmin; p <= pmax; p++){
+				auto v = curr[i].check(words[*it1] + p, last_seg);
+				if (v){
+
+					if (v->size()>0){
+
+						for (std::vector<int>::iterator it = v->begin(); it != v->end(); ++it){
+
+							if (verified[*it] != *it1){
+								if (first_match_pair[*it].first == *it1){
+									if (first_match_pair[*it].second != i){
+
+										verified[*it] = *it1;
+										if (!newFilter(*it1, *it, strlen(words[*it1]))){
+											continue;
+										}
+										results[len - start].second++;
+										int d = LevenshteinDistance_length_aware_modified(words[*it1], words[*it], strlen(words[*it1]), l, tau,i1);
+										if (d <= tau){
+
+											results[len - start].first++;
+											//matched_strings.push_back(make_pair(*it1, *it));
+										}
+									}
+								}
+								else{
+
+									first_match_pair[*it].first = *it1;
+									first_match_pair[*it].second = i;
+
+								}
+
+							}
+						}
+					}
+
+				}
+
+			}
+			pi += last_seg;
+		}
+	}
+	//results[len - start].second = cand_l;
+	return 0;
 }
 
 int passjoin::self_join(int len,int B0,int B1,char**words){

@@ -19,6 +19,7 @@ class passjoin{
 public:
 	vector<int> *** strings_indexed;
 	vector<int> * strings_len_indexed;
+	pair<long,long> * results;
 	int tau;
 	utils utils1;
 	InvList L;
@@ -32,11 +33,15 @@ public:
 	int * v0;
 	int * v1;
 	int * e;
+	int ** v01;
+	int ** v11;
+	int ** e1;
 	int  j, r, s, start_s, end_s, start_r, end_r;
 	char * word_r;
 	char * word_s;
 	char * output;
 	long candidates;
+	long candidates_l;
 	long overallSubstrings;
 	long matched_pair;
 	ofstream myfile;
@@ -66,8 +71,9 @@ public:
 	int candidate_tau_plus_two_hist_len_tree_ind_len_index(int len,char**words);
 	int self_join(int len,int B0,int B1,char**words);
 	int R_S_join(int l,int b0,int b1,int len,int B0,int B1,char**words);
-	int self_join(int len,char**words);
+	int self_join(int len,char**words,int i);
 	int R_S_join(int l,int len,char**words);
+	int R_S_join(int l, int len, char**words,int i);
 	bool iterativeVerify(char * r, char * s, int i, int first_seg, int last_seg, int k, int start_r, int start_s, int end_r, int end_s, int pos_s, int pos_r, int tau_dash, iterVerfy_dir f);
 	int * verified;
 	//int * previous;
@@ -101,6 +107,7 @@ public:
 	void partion_tau_2_tree_ind(char *x, int l, int id);
 	void partion_tau_2_tree_ind_hist_index(char *x, int l, int id);
 	int LevenshteinDistance_length_aware_modified(char * word1, char * word2, int word1_len, int word2_len, int tau);
+	int LevenshteinDistance_length_aware_modified(char * word1, char * word2, int word1_len, int word2_len, int tau,int i);
 	int LevenshteinDistance_length_aware_modified(char * word1, char * word2, int start_1, int start_2, int end_1, int end_2, int tau);
 	bool multi_match( char* s1, char * r1, int delta, int first_seg, int last_seg, int k);
 	int candidate_extension_mutli(char *x, int x_len, int pos_x, char ** words);
