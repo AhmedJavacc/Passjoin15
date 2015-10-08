@@ -17,7 +17,7 @@
 	int *numlen;
 	void call_from_thread(pair<int,pair<int, int>>start_end){
 		//cout<<
-		cout << start_end.second.second << endl;
+		//cout << start_end.second.second << endl;
 		for (int i = start_end.second.first; i < start_end.second.second; i++){
 			p->self_join(i + p->start, r1->words,start_end.first);
 		}
@@ -91,7 +91,7 @@
 
 
         size_t ind_tree_size = strlen(r.words[r.wcnt - 1]) - first_length + 1;
-        cout << first_length << endl;
+        //cout << first_length << endl;
         p.lenc = new int[ind_tree_size];
         memset(p.lenc, 0, sizeof(p.lenc));
         p.curr_i = new int[ind_tree_size];
@@ -101,7 +101,7 @@
 		p.results = new pair<long, long>[ind_tree_size];
         p.L2 = new InvList_Seg *[ind_tree_size];
         p.L_B0_B1 = new InvList_Seg ***[ind_tree_size];
-        cout << "dddd" << endl;
+       // cout << "dddd" << endl;
         for (int i = 0; i < ind_tree_size; i++){
             p.strings_indexed[i]=new vector<int> *[2*p.tau+1];
 			p.results[i] = make_pair(0, 0);
@@ -115,7 +115,7 @@
             }
             p.L2[i] = new InvList_Seg[p.tau + k];
         }
-        cout << "ssss" << endl;
+        //cout << "ssss" << endl;
        // memset(p.coutChar, 0, (r.wcnt) * 4);
         p.histograms = new int*[r.wcnt];
         p.histograms_SSE = new float*[r.wcnt];
@@ -128,7 +128,7 @@
    /*     for (int i = first_index; i < r.wcnt; i++){
             p.coutChar[i] = utils1.countChar(r.words[i]);
         }*/
-        cout << "wwww" << endl;
+      //  cout << "wwww" << endl;
         for (int i = first_index; i < r.wcnt; i++){
 
             p.histograms_first[i]= new float[28];
@@ -154,7 +154,7 @@
 
             }
         }
-        cout << "fffff" << endl;
+        /*cout << "fffff" << endl;*/
         for (int i = first_index; i < r.wcnt; i++){
 
             p.histograms[i] = new int[28];
@@ -321,7 +321,7 @@
 				p1.matched_pair += p1.results[i].first;
 				p1.results[i].first = 0;
 			}
-			cout << " SS " << p1.candidates << endl;
+			//cout << " SS " << p1.candidates << endl;
 
 			thread **t=new thread*[p1.tau];
 			int size = 0;
@@ -346,21 +346,7 @@
 
 				}
 			}
-			//for (int i = 0; i < size; i++){
-			//	t[i].join();
-			//}
 
-			//for (int i = 0; i<len; i++){
-			//	//cout << i << endl;
-			//	if (p1.lenc[i]>0){
-
-			//		//cout << i << "d" << j << "w" << k << endl;
-			//		 p1.candidates += p1.candidate_tau_plus_two_hist_len_tree_ind_len_index(i, r.words);
-			//		//p1.candidates += p1.self_join(i + p1.start, r.words);
-			//	}
-
-
-			//}
 			for (int i = 0; i < len; i++){
 				p1.candidates += p1.results[i].second;
 				p1.matched_pair += p1.results[i].first;
